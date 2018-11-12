@@ -1,7 +1,4 @@
 #!/usr/bin/perl -w 
-## Author: Tilai
-## Laboratory of TL
-## Version 0.6
 
 use strict;
 use Getopt::Std;
