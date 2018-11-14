@@ -50,7 +50,8 @@ eval { # Catch errors
     }
     $operations{$ops[$i]} = $i;
   }
-
+  
+  
   my $compressed = ($inputfile =~ /\.gz$/);
   my ($compressedintronfile, $uncompressedintronfile, $uncompressedexonfile, $compressedexonfile, $headerfile, $sortedfile, $preprocessedfile, $bedpeout, $vcfout);
   my @todelete = (); # List of files to delete at end of run
@@ -314,6 +315,7 @@ eval { # Catch errors
 	$rightexontranscriptnames = getfields($info_b,"left_ExonTranscript");
 	$rightintrontranscriptnames = getfields($info_b,"left_IntronTranscript");
       }
+
 
       # We want to make sure we don't consider any variant which is contained within an intron. To do this, we want to cancel out any introns present in both $leftintrons and $rightintrons. However, because a breakend's confidence interval may extend into multiple introns, we can't just exclude any transcript with an intron in both lists, or we would miss some truly transcript-truncating variants. So, we start by considering truncated the transcripts whose exons are affected ($leftexontranscriptnames and $rightexontranscriptnames). We then count the number of instances of each transcript in $leftintrontranscriptnames and $rightintrontranscriptnames. Next, we reduce the number of instances of each transcript by 1 for each of its introns which occurs in both $leftintrons and $rightintrons, as this means this variant is confined to that intron, so that intron does not provide evidence of a truncation. Any transcripts left with at least one instance in %leftintrontranscriptnames are then considered truncated, and are added back to %lefttruncatedtranscripts and %righttruncatedtranscripts. Transcripts contained within the span of a DEL are not considered truncating because they are already captured by the SPAN score
       # %lefttruncatedtranscripts and %righttruncatedtranscripts are {transcript => 1}
@@ -593,6 +595,7 @@ sub replaceoraddfield {
   return $info;
 }
 
+
 sub main::HELP_MESSAGE() {
   print STDERR "usage: ./svscore.pl [-dv] [-o op] [-e exonfile] [-f intronfile] [-c caddfile] -i vcf
     -i	      Input VCF file. May be bgzip compressed (ending in .vcf.gz). Use \"-i stdin\" if using standard input
@@ -612,3 +615,4 @@ sub main::HELP_MESSAGE() {
 sub main::VERSION_MESSAGE() {
   print "SVScore version $main::VERSION\n";
 }
+
